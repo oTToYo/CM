@@ -1,0 +1,135 @@
+﻿<!DOCTYPE html>
+ 
+<html>
+<head>
+    	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+
+<title>hackMailManagemt</title>
+
+	<link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,700|Open+Sans:300italic,400,300,700' rel='stylesheet' type='text/css'>
+	
+	<link rel="stylesheet" type="text/css" class="ui" href="../packaged/css/semantic.min.css">
+	<link rel="stylesheet" type="text/css" href="../packaged/css/semantic.css">
+	
+	<link rel="stylesheet" type="text/css" href="homepage.css">
+	<link href="css/latoja.datepicker.css" rel="stylesheet">
+	<link href="css/jquery-ui-1.10.1.css" rel="stylesheet" >
+	<script src="//code.jquery.com/jquery-1.10.2.js"></script>
+	
+	<script src="../packaged/javascript/jquery.min.js"></script>
+	<script src="../packaged/javascript/semantic.js"></script>
+	
+	<script src="//code.jquery.com/ui/1.11.0/jquery-ui.js"></script>
+	
+	<script src="homepage.js"></script>
+    <script type="text/javascript">
+        $(function () {
+            var h = [];
+            //建立一個3x3個欄位的Table，含標題列、欄為4x4
+            for (var r = 0; r <= 3; r++) {
+                h.push("<tr>");
+                for (var c = 0; c <= 3; c++) {
+                    if (r == 0) {
+                        if (c == 0)
+                            h.push("<td class='rh ch'>&nbsp;</td>");
+                        else
+                            h.push("<td class='ch'>C" + c + "</td>");
+                    }
+                    else if (c == 0)
+                        h.push("<td class='rh'>R" + r + "</td>");
+                    else
+                        h.push("<td class='cell'>V" + r + c + "</td>");
+                }
+                h.push("</tr>");
+            }
+            $("#tblEditor").html(h.join(''));
+            //加上點選進入編輯模式的事件
+            $("td.cell").live("dblclick", function () {
+                //若已有其他欄位在編輯中，強制結束
+                if (window.$currEditing)
+                    finishEditing($currEditing);
+                var $cell = $(this);
+                var $inp = $("<input type='text' />");
+                $inp.val($cell.text());
+                $cell.addClass("cell-editor").html("").append($inp);
+                $inp[0].select();
+                window.$currEditing = $inp;
+            }).live("click", function () {
+                //點選其他格子，強制結束目前的編輯欄
+                if (window.$currEditing
+                    //排除點選目前編輯欄位的情況
+                    && $currEditing.parent()[0] != this)
+                    finishEditing($currEditing);
+            });
+            //加上按Enter/Tab切回原來Text的事件
+            $("td.cell-editor input").live("keydown", function (e) {
+                if (e.which == 13 || e.which == 9)
+                    finishEditing($(this));
+            });
+            //結束編輯模式
+            function finishEditing($inp) {
+                $inp.parent().removeClass("cell-editor").text($inp.val());
+                window.$currEditing = null;
+            }
+        });
+    </script>
+    <style type="text/css">
+        #tblEditor { width: 300px; height: 300px; }
+        #tblEditor td { border: 1px solid #444444; text-align: center; width: 25%; }
+        td.cell-editor { background-color: #ddffdd; }
+        td.cell-editor input { 
+            width: 90%; border: 0px none black; background-color: #ddffdd; 
+        }
+        .ch,.rh { background-color: #dddddd; }
+    </style>
+</head>
+<body>
+    <table id="tblEditor"></table>
+	<div class="ui " id="addform">
+	  <i class="close icon"></i>
+	  <div class="header">
+		新增停用帳號
+	  </div>
+		  <div class="content">
+			<form class="ui form segment">
+				
+				<div class="field">
+				<label>date</label>
+				<input class="addCount datepicker ll-skin-latoja"  name="act" type="text">
+			  </div>
+				<p></p>
+			  <div class="field">
+				<label>account</label>
+				<input class="addCount" placeholder="account" name="act" type="text">
+			  </div>
+				<p></p>
+				<div class="field">
+				<label>type</label>
+				<input class="addCount" placeholder="type" name="act" type="text">
+			  </div>
+				<p></p>
+				<div class="field">
+				<label>ip</label>
+				<input class="addCount" placeholder="ip" name="act" type="text">
+			  </div>
+				<p></p>
+				<div class="field">
+				<label>備註</label>
+				<input class="addCount" placeholder="notes" name="act" type="text">
+			  </div>
+			 
+		</form>
+	  </div>
+	  <div class="actions">
+		<div class="ui button">
+		  Cancel
+		</div>
+		<button class="ui button" id="prepend">
+		  Okay
+		</button>
+	  </div>
+	</div>
+</body>
+</html>
